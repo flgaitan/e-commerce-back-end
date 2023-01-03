@@ -5,10 +5,10 @@ const { Category, Product } = require('../../models');
 
 router.get('/', (req, res) => {
   Category.findAll ({
-    include: {
+    include: [{
       model: Product,
       attributes: ['product_name'] 
-    }
+    }]
     })
     .then(categoryData => res.json(categoryData))
     .catch(err => {
@@ -26,22 +26,26 @@ router.get('/:id', (req, res) => {
     where: {
       id: req.params.id
     },
-    include: {
+    include: [{
       model: Product,
       attributes: ['category_id']
-    }
+    }]
   })
-  .then(categoryData => res.json(categoryData))
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
-    })
+  .then(categoryData => {
+    if (!categoryData){
+      res.status(404).json({message: 'No category found with I requested'});
+      return;
+    }
+    res.json(categoryData);
+  });
+    //res.json(categoryData))
+ 
 });
 
 router.post('/', (req, res) => {
   // create a new category
   Category.create({
-    category_name: req.params.category_name
+    category_name: req.body.category_name
   })
   .then(categoryData => res.json(categoryData))
   .catch(err => {
@@ -52,17 +56,17 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // update a category by its `id` value
-  Category.update (
-    {
-      category_name: req.params.category_name
-    },
-    {
+  Category.update (req.body, {
+    //{
+      //category_name: req.body.category_name
+    //},
       where: {
         id: req.params.id
       }
     })
     .then(categoryData => {
-      if (!categoryData){
+      if (!categoryData[0]){
+      //if (!categoryData){
         res.status(404).json({ message: 'No Category found, Error in ID'});
         return;
       }
