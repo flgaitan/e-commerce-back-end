@@ -7,7 +7,7 @@ router.get('/', (req, res) => {
   Category.findAll ({
     include: [{
       model: Product,
-      attributes: ['product_name'] 
+      attributes: ['id', 'product_name', 'price', 'stock', 'category_id'] 
     }]
     })
     .then(categoryData => res.json(categoryData))
@@ -28,18 +28,21 @@ router.get('/:id', (req, res) => {
     },
     include: [{
       model: Product,
-      attributes: ['category_id']
+      attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
     }]
   })
   .then(categoryData => {
     if (!categoryData){
-      res.status(404).json({message: 'No category found with I requested'});
+      res.status(404).json({message: 'No category found with Id requested'});
       return;
     }
     res.json(categoryData);
+  })
+  .catch (err => {
+    console.log(err);
+    res.status(500).json(err);
   });
-    //res.json(categoryData))
- 
+   
 });
 
 router.post('/', (req, res) => {

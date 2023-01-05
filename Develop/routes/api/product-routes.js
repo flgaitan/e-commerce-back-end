@@ -16,12 +16,12 @@ router.get('/', (req, res) => {
         },
         {
           model: Tag,
-          attributes: ['tag_name']
+          attributes: ['id', 'tag_name']
         }
       ]
     }   
   )
-  .then(productData => res.json(productData))
+  .then(categoryData => res.json(categoryData))
   .catch(err => {
     console.log(err);
     res.status(500).json(err);
@@ -37,19 +37,19 @@ router.get('/:id', (req, res) => {
     },
     include: [{
       model: Category,
-      attributes: ['category_name']
+      attributes: ['id', 'category_name']
     },
     {
       model: Tag,
       attributes: ['tag_name']
     }]
   })
-  .then(productData => {
-    if (!productData){
+  .then(categoryData => {
+    if (!categoryData){
       res.status(404).json({message: 'No product found with ID requested'});
       return;
     }
-    res.json(productData);
+    res.json(categoryData);
   })
     .catch(err => {
     console.log(err);
@@ -147,12 +147,12 @@ router.delete('/:id', (req, res) => {
       id: req.params.id
     }
   })
-  .then(productData => {
-    if (!productData){
+  .then(categoryData => {
+    if (!categoryData){
       res.status(404).json({ message: 'No item found'});
       return;
     }
-    res.json(productData); 
+    res.json(categoryData); 
   })
   .catch(err => {
     console.log(err);

@@ -8,13 +8,14 @@ router.get('/', (req, res) => {
   // be sure to include its associated Product data
   Tag.findAll(
     {
-      include: {
-        model: Product
-      }
+      include: [{
+        model: Product,
+        attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
+      }]
     }
   )
-  .then(tagData => res.json(tagData))
-  .ctach(err => {
+  .then(categoryData => res.json(categoryData))
+  .catch(err => {
     console.log(err);
     res.status(500).json(err);
   });
@@ -28,14 +29,22 @@ router.get('/:id', (req, res) => {
       id: req.params.id
     },
     include: {
-      model: Product
+      model: Product,
+      attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
     }
   })
-  .then(tagData => res.json(tagData))
-  .catch(err => {
+  .then(categoryData => {
+    if (!categoryData){
+      res.status(404).json({message: 'No tag found with ID requested'});
+      return;
+    }
+    res.json(categoryData);
+  })
+  .catch (err => {
     console.log(err);
     res.status(500).json(err);
   });
+  
 });
 
 router.post('/', (req, res) => {
@@ -43,7 +52,7 @@ router.post('/', (req, res) => {
   Tag.create({
     tag_name: req.body.tag_name
   })
-  .then(tagData => res.json(tagData))
+  .then(categoryData => res.json(categoryData))
   .catch(err => {
     console.log(err);
     res.status(500).json(err);
@@ -60,12 +69,12 @@ router.put('/:id', (req, res) => {
       id: req.params.id
     }
   })
-  .then(tagData => {
-    if (!tagData){
+  .then(categoryData => {
+    if (!categoryData){
       res.status(404).json({message: 'No tag found with ID requested'});
       return;
     }
-    res.json(tagData);
+    res.json(categoryData);
   })
   .catch(err => {
     console.log(err);
@@ -80,12 +89,12 @@ router.delete('/:id', (req, res) => {
       id: req.params.id
     }
   })
-  .then(tagData => {
-    if (!tagData){
+  .then(categoryData => {
+    if (!categoryData){
       res.status(404).json({message: 'No tag found with ID requested'});
       return;
     }
-    res.json(tagData);
+    res.json(categoryData);
   })
   .catch(err => {
     console.log(err);
